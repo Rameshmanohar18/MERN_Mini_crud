@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import {useEffect,useState,} from "react";
 import API from "./services/api.js";
 import ItemForm from "./components/ItemForm";
 import ItemTable from "./components/ItemTable";
@@ -10,6 +7,7 @@ import "./App.css";
 function App() {
 
   const [items, setItems] = useState([]);
+  
   const fetchItems = async () => {
     const res = await API.get();
     setItems(res.data);
