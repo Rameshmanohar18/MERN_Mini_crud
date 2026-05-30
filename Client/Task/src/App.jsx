@@ -17,10 +17,29 @@ function App() {
     fetchItems();
   }, []);
 
+  // const addItem = async (data) => {
+  //   await API.post("/", data);
+  //   fetchItems();
+  // };
+
+
+
+
+
   const addItem = async (data) => {
-    await API.post("/", data);
-    fetchItems();
-  };
+  await API.post("/", {
+    purchase_date: data.purchase_date,
+    items: [
+      {
+        name: data.name,
+        stock_available: data.stock_available,
+        item_type_id: data.item_type_id,
+      },
+    ],
+  });
+
+  fetchItems();
+};
 
   const deleteItem = async (id) => {
     await API.delete(`/${id}`);
