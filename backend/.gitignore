@@ -1,3 +1,8 @@
 node_modules
 
+<<<<<<< HEAD
 # To remove the bundle size of the applications
+=======
+
+// To reduce the bundle sizs we go for this .gitignore file
+>>>>>>> c9bce5f2e04eefbebf025f80966a4c4c9be98adc
