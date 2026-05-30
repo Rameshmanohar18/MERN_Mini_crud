@@ -9,8 +9,12 @@ function App() {
   const [items, setItems] = useState([]);
   
   const fetchItems = async () => {
-    const res = await API.get();
-    setItems(res.data);
+    try {
+      const res = await API.get();
+      setItems(res.data);
+    } catch (err) {
+      console.error("Fetch items failed:", err.response?.data || err.message);
+    }
   };
 
   useEffect(() => {
@@ -27,19 +31,23 @@ function App() {
 
 
   const addItem = async (data) => {
-  await API.post("/", {
-    purchase_date: data.purchase_date,
-    items: [
-      {
-        name: data.name,
-        stock_available: data.stock_available,
-        item_type_id: data.item_type_id,
-      },
-    ],
-  });
+    try {
+      await API.post("/", {
+        purchase_date: data.purchase_date,
+        items: [
+          {
+            name: data.name,
+            stock_available: data.stock_available,
+            item_type_id: Number(data.item_type_id),
+          },
+        ],
+      });
 
-  fetchItems();
-};
+      await fetchItems();
+    } catch (err) {
+      console.error("Add item failed:", err.response?.data || err.message);
+    }
+  };
 
   const deleteItem = async (id) => {
     await API.delete(`/${id}`);

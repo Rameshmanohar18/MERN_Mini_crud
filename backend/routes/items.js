@@ -5,6 +5,16 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+const handleDbError = (res, action, err) => {
+  console.error(`Database error while ${action}:`, err.message);
+
+  return res.status(500).json({
+    message: `Database error while ${action}`,
+    code: err.code,
+    sqlMessage: err.sqlMessage || err.message,
+  });
+};
+
 /*
 ==================================
 CREATE PURCHASE WITH MANY ITEMS
@@ -31,7 +41,7 @@ router.post("/", (req, res) => {
     [purchase_date],
     (err, purchaseResult) => {
       if (err) {
-        return res.status(500).json(err);
+        return handleDbError(res, "creating purchase", err);
       }
 
       const purchaseId = purchaseResult.insertId;
@@ -61,7 +71,7 @@ router.post("/", (req, res) => {
 
       db.query(sql, [values], (err2, result2) => {
         if (err2) {
-          return res.status(500).json(err2);
+          return handleDbError(res, "adding items", err2);
         }
 
         res.status(201).json({
@@ -85,6 +95,7 @@ router.get("/", (req, res) => {
       items.name,
       purchases.purchase_date,
       items.stock_available,
+      items.item_type_id,
       item_types.type_name
     FROM items
     JOIN purchases
@@ -96,7 +107,7 @@ router.get("/", (req, res) => {
 
   db.query(sql, (err, result) => {
     if (err) {
-      return res.status(500).json(err);
+      return handleDbError(res, "fetching items", err);
     }
 
     res.json(result);
@@ -138,7 +149,7 @@ router.put("/:id", (req, res) => {
     [name, stock_available, item_type_id, id],
     (err, result) => {
       if (err) {
-        return res.status(500).json(err);
+        return handleDbError(res, "updating item", err);
       }
 
       res.json({
@@ -162,7 +173,7 @@ router.delete("/:id", (req, res) => {
     [id],
     (err, result) => {
       if (err) {
-        return res.status(500).json(err);
+        return handleDbError(res, "deleting item", err);
       }
 
       res.json({
